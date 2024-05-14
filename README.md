@@ -40,6 +40,8 @@ config._counter = 100   # Won't be saved with configuration file
 
 global_uid = config.uid  # config.uid doesn't exist so both global_uid and config.uid set None
 global_guid = config.assign('guid', 12345678) # Both global_guid and config.guid set 12345678
+# or simply
+config.assign('another_guid', 987654321) # Initialises config.another_guid if it doesn't already exist
 
 # and save
 config.save_config()
