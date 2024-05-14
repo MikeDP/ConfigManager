@@ -8,7 +8,7 @@ There are numerous method for persisting application configuration data in Pytho
 
 Internally, ConfigManager uses JSON to store it's data. New attributes can be created as normal by simple assignment. If you try to assign a non-existent attribute to a variable with =, it will assign 'None' rather than generate an exception.  You can use CM.assign('attrb', DefaultValue) to simultaneously create and assign an attribute - if it doesn't already exist (current value is None), the default value is used.  Attributes can be any normal Python type and all attributes are saved _except_ those that are 'callable' (functions) or 'private' (start with '_').
 
-##Example Usage
+## Example Usage
 Basic config file
 ```
 Import ConfigManager
@@ -29,7 +29,10 @@ config = ConfigManager('MyApp', 'myapp')
 config.user = config.assign("user", "Dave")  # config.user is aready set to 'Mike'
 # Assign new default value if config.position doesn't exist
 global_position = config.assign(config.position, {'X': 0.00, 'Y': 0.00})
+# Both global_position and config.position are unchanged at {'X':24.5... 
 config._counter = 100   # Won't be saved with configuration file
+global_uid = config.uid  # config.uid doesn't exist so both global_uid and config.uid set None
+global_guid = config.assign('guid', 12345678) # Both global_guid and config.guid set 12345678
 # and save
 config.save_config()
 ```
