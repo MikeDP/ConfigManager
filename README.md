@@ -11,7 +11,7 @@ Internally, ConfigManager uses JSON to store it's data. New attributes can be cr
 ## Example Usage
 Basic config file
 ```
-Import ConfigManager
+import ConfigManager
 ...
 # Creates a configuration file at /home/$USER/.config/MyApp/myapp.config
 config = ConfigManager('MyApp', 'myapp')
