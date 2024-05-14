@@ -15,24 +15,31 @@ Import ConfigManager
 ...
 # Creates a configuration file at /home/$USER/.config/MyApp/myapp.config
 config = ConfigManager('MyApp', 'myapp')
+
 # Basic assign values
 config.user = "Mike"
 config.position = {'X': 24.5, 'Y': -16.1}
+
 # and save
 config.save_config()
 ```
 Better usage - doesn't overwrite persisted data
 ```
-# Create/uss configuration file at /home/$USER/.config/MyApp/myapp.config
+# Create/use configuration file at /home/$USER/.config/MyApp/myapp.config
 config = ConfigManager('MyApp', 'myapp')
+
 # Assign default value 'Dave' if config.user doesn't already exist
 config.user = config.assign("user", "Dave")  # config.user is aready set to 'Mike'
+
 # Assign new default value if config.position doesn't exist
 global_position = config.assign(config.position, {'X': 0.00, 'Y': 0.00})
-# Both global_position and config.position are unchanged at {'X':24.5... 
+# Both global_position and config.position are unchanged at {'X':24.5...
+ 
 config._counter = 100   # Won't be saved with configuration file
+
 global_uid = config.uid  # config.uid doesn't exist so both global_uid and config.uid set None
 global_guid = config.assign('guid', 12345678) # Both global_guid and config.guid set 12345678
+
 # and save
 config.save_config()
 ```
