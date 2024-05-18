@@ -20,7 +20,7 @@ A simple list of the GUI item names is sufficient to identify the items to persi
   1. Only QT5 (PyQT) framework is supported, though it should be relatively straightforwards to swap this for TKinter, WxPython or PyGObject support.
   2. Only the most common QT5 widgets are currently supported, but others can be added as required.
 ## Example Usage
-Basic config file
+#### Basic config file
 ```
 import ConfigManager
 ...
@@ -34,7 +34,7 @@ config.position = {'X': 24.5, 'Y': -16.1}
 # and save
 config.save_config()
 ```
-Better usage - accepts persisted data on re-start
+#### Better usage - accepts persisted data on re-start
 ```
 # Create/use configuration file at /home/$USER/.config/MyApp/myapp.config
 config = ConfigManager('MyApp', 'myapp')
@@ -57,7 +57,7 @@ config.assign('another_guid', 987654321) # Initialises config.another_guid if it
 # and save
 config.save_config()
 ```
-QTConfigManager example
+#### QTConfigManager example
 ```
 import QTConfigManager
 ...
