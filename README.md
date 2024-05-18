@@ -4,6 +4,10 @@ There are numerous method for persisting application configuration data in Pytho
   * Binary blobs
   * XML/YAML/JSON formatted files
 
+This small project provides two simple classes to persist application data without the user needing to provide anything other than a destination file path and (possibly) a list of items to persist:
+  * **ConfigManager**: A class that can be used for CLI and non-GUI apps.
+  * **QTConfigManager**: A class that can be used with QT5 app to persist/restore specific active GUI elements.
+
 `ConfigManager` (CM) is a Python class to trivialise persisting app data from CLI or GUI applications. Your application merely creates an instance of ConfigManager, creates and assigns values to its attributes and calls 'save_config' (as it closes) to write the data to the configuration file.  Subsequent runs of your appliction will read the configuration file on startup, and re-create the previous attributes with the previous values.
 
 Internally, ConfigManager uses JSON to store it's data. New attributes can be created as normal by simple assignment. If you try to assign a non-existent attribute to a variable with =, it will assign 'None' rather than generate an exception.  You can use `CM.assign('attrb', DefaultValue)` to simultaneously create and assign an attribute - if it doesn't already exist (current value is None), the default value is used.  Attributes can be any normal Python data type[^1] and all attributes are saved _except_ private ones (attributes starting with '_'), with the exception of `_comment`, which can be used as a _header_ for the saved config.
