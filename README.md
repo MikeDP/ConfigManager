@@ -19,6 +19,9 @@ A simple list of the GUI item names is sufficient to identify the items to persi
   1. Only widgets from one form can currently be saved automatically, though its quite feasible to save/restore widgets from other forms individually as additional QM.attributes.
   1. Only QT5 (PyQT) framework is supported, though it should be relatively straightforwards to swap this for TKinter, WxPython or PyGObject support.
   2. Only the most common QT5 widgets are currently supported, but others can be added as required.
+#### ToDo:
+  1. Extend to cover multiple forms.
+  2. Support temporary GUI state save/restore during a single app run.
 ## Example Usage
 #### Basic config file
 ```
