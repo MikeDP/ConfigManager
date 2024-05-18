@@ -16,12 +16,11 @@ Internally, ConfigManager uses JSON to store it's data. New attributes can be cr
 `QTConfigManager` (QM) is a similar python class but extended to specifically persist/restore the values of QT5 GUI elements.  This can be used to save/restore the complete state of GUI based applications between different runs, users etc.
 A simple list of the GUI item names is sufficient to identify the items to persist.
 ## Notes:
-  1. Only widgets from one form can currently be saved automatically, though its quite feasible to save/restore widgets from other forms individually as additional QM.attributes.
+  1. Only widgets from one form can currently be saved automatically, though its quite feasible to save/restore widgets from other forms individually as additional QM.attributes, see last example.
+  2. You can use `save_qt()` and `restore_qt()` to temporarily save/restore state in a running application 
   1. Only QT5 (PyQT) framework is supported, though it should be relatively straightforwards to swap this for TKinter, WxPython or PyGObject support.
   2. Only the most common QT5 widgets are currently supported, but others can be added as required.
-#### ToDo:
-  1. Extend to cover multiple forms.
-  2. Support temporary GUI state save/restore during a single app run.
+
 ## Example Usage
 #### Basic config file
 ```
@@ -72,10 +71,29 @@ qt_config = QTConfigManager(self, 'MyApp', 'myguiapp') # self is owner of widget
 # Change the comment
 qt_config._comment = "MyGUIApp: DO NOT HAND EDIT"  #  Appears at the top of the saved file
 
-rgs, _, _, values = inspect.getargvalues(frame)# Load list of items to save if not found (1st run)
+# Load list of items to save if not found (1st run)
 qt_config.assign('ui_list', WDGT_LIST)
 ...
 # and save
 qt_config.save_config()
 ```
-
+#### Saving GUI items from secondary form
+```
+WDGT_LIST = ['cbComboBox', 'leLineEdit', 'rbRadioBtn1',...] # List of QT5 widgets to save
+# Create/use configuration file at /home/$USER/.config/MyApp/myguiapp.config
+qt_config = QTConfigManager(self, 'MyApp', 'myguiapp') # self is owner of widgets
+# Change the comment
+qt_config._comment = "MyGUIApp: DO NOT HAND EDIT"  #  Appears at the top of the saved file
+# Load list of items to save if not found (1st run)
+qt_config.assign('ui_list', WDGT_LIST)
+...
+# Get GUI items from another form (MyForm2)
+WDGT_LIST2 = ['cbCheckBox1', 'sbSpinBox2',...]
+# Get GUI items from Myform2
+qt_config.form2 = qt_config.save_qt(WDGT_LIST2, MyForm2) # This will be saved later when .save_config() is called
+...
+# Restore values to MyForm2
+qt_config.restore_qt(qt_config.form2, MyForm2) # Make sure MyForm2 exists first
+...
+qt_config.save_config()
+```
