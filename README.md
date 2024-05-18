@@ -13,6 +13,12 @@ This small project provides two simple classes to persist application data witho
 Internally, ConfigManager uses JSON to store it's data. New attributes can be created as normal by simple assignment. If you try to assign a non-existent attribute to a variable with =, it will assign 'None' rather than generate an exception.  You can use `CM.assign('attrb', DefaultValue)` to simultaneously create and assign an attribute - if it doesn't already exist (current value is None), the default value is used.  Attributes can be any normal Python data type[^1] and all attributes are saved _except_ private ones (attributes starting with '_'), with the exception of `_comment`, which can be used as a _header_ for the saved config.
 [^1]: Any type from bool, str, bytes, int, float, complex, list, tuple, dict or set.
 
+`QTConfigManager` (QM) is a similar python class but extended to specifically persist/restore the values of QT5 GUI elements.  This can be used to save/restore the complete state of GUI based applications between different runs, users etc.
+A simple list of the GUI item names is sufficient to identify the items to persist.
+## Notes:
+  1. Only widgets from one form can currently be saved automatically, though its quite feasible to save/restore widgets from other forms individually as additional QM.attributes.
+  1. Only QT5 (PyQT) framework is supported, though it should be relatively straightforwards to swap this for TKinter, WxPython or PyGObject support.
+  2. Only the most common QT5 widgets are currently supported, but others can be added as required.
 ## Example Usage
 Basic config file
 ```
@@ -51,3 +57,20 @@ config.assign('another_guid', 987654321) # Initialises config.another_guid if it
 # and save
 config.save_config()
 ```
+QTConfigManager example
+```
+import QTConfigManager
+...
+WDGT_LIST = ['cbComboBox', 'leLineEdit', 'rbRadioBtn1',...] # List of QT5 widgets to save
+
+# Create/use configuration file at /home/$USER/.config/MyApp/myguiapp.config
+qt_config = QTConfigManager(self, 'MyApp', 'myguiapp') # self is owner of widgets
+# Change the comment
+qt_config._comment = "MyGUIApp: DO NOT HAND EDIT"  #  Appears at the top of the saved file
+# Load list of items to save if not found (1st run)
+qt_config.assign('ui_list', WDGT_LIST)
+...
+# and save
+qt_config.save_config()
+```
+
