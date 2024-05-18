@@ -65,9 +65,11 @@ WDGT_LIST = ['cbComboBox', 'leLineEdit', 'rbRadioBtn1',...] # List of QT5 widget
 
 # Create/use configuration file at /home/$USER/.config/MyApp/myguiapp.config
 qt_config = QTConfigManager(self, 'MyApp', 'myguiapp') # self is owner of widgets
+
 # Change the comment
 qt_config._comment = "MyGUIApp: DO NOT HAND EDIT"  #  Appears at the top of the saved file
-# Load list of items to save if not found (1st run)
+
+rgs, _, _, values = inspect.getargvalues(frame)# Load list of items to save if not found (1st run)
 qt_config.assign('ui_list', WDGT_LIST)
 ...
 # and save
