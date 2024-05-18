@@ -6,6 +6,7 @@ This python module contains a class to trivially persist application data,
 including QT GUI interface items.
 
 V0.1  Alpha 17/05/24 
+v0.2  18/05/24 Extended to multiple forms handling
 '''
 import json
 import os
@@ -15,7 +16,7 @@ from PyQt5.QtWidgets import (QCheckBox, QComboBox, QDateEdit, QDoubleSpinBox,
                              QLabel, QLineEdit, QRadioButton, QSpinBox, QWidget)
 
 # ############################# CONSTANTS ##############################
-__VER__ = '0.1'
+__VER__ = '0.2'
 
 # ############################## CLASSES ###############################
 
@@ -31,17 +32,18 @@ class QTConfigManager:
     elements on a single form. QM.ui_list is a list of ui element names to be persisted 
     and QM.ui is a dict of name:value pairs which is automatically generated from QM.ui_list 
     """
-    def __init__(self, parent, foldr: str, file_name: str, comment: str="DO NOT HAND EDIT!"):
+    def __init__(self, form, foldr: str, file_name: str, comment: str="DO NOT HAND EDIT!"):
         """
         Initialize the ConfigManager.
         Args:
-            parent (obj): Ref to parent object that owns GUI objects (MainForm)
+            form (obj): Ref to object that owns GUI objects (MainForm)
             foldr (str): Name of a folder in ~/.config in which to place
                          the config file - created if not present.
             file_name (str): The name of the configuration file, no extension!
             comment (str): User definable comment saved with config.
         """
-        self.parent = parent
+        # This is the form that has the GUI elements
+        self._mainform = form
         # Ensure config file and folder can exist
         user_home = os.path.expanduser("~")
         self._file_path = f"{user_home}/.config/{foldr}"
@@ -59,17 +61,22 @@ class QTConfigManager:
                     setattr(self, key, value)
             # Now load UI data if present
             if "ui" in dir(self):
-                self._restore_qt(self.ui)
+                self.restore_qt(self.ui)
 
         except FileNotFoundError:
             print("Config file not found. Creating a new one.")
+
+    def save_state(self, items: list) -> dict:
+        """
+        Returns the current state of 'items' GUI objects as a dict
+        """
 
     def save_config(self):
         """Save configuration data to the file. """
         config_data = {}
         # Generate UI elements dict
         if "ui_list" in dir(self):
-            self.ui = self._save_qt(self.ui_list)
+            self.ui = self.save_qt(self.ui_list)
         # Now get all the attributes to save
         for attr_name in dir(self):
             if not attr_name.startswith("_") or attr_name == '_comment':
@@ -82,7 +89,6 @@ class QTConfigManager:
         # Now sort and save it
         with open(self._file_path, 'w', encoding="utf8") as file:
             json.dump(sorted_dict, file, indent=2, sort_keys=False)
-
 
     def __getattr__(self, name):
         """
@@ -104,16 +110,18 @@ class QTConfigManager:
             current_val = def_val
         return current_val
 
-    def _save_qt(self, uilist: list) -> dict:
+    def save_qt(self, uilist: list, form=None) -> dict:
         """Generic persist UI values as a dictionary.
             LST: list of UIelements to save values for.
             Returns: dictionairy of UIelement name:value pairs
         """
         dic = {}
+        if form is None:
+            form = self._mainform
         try:
             for wdgt_name in uilist:
                 # Get GUI Object
-                gui_obj = getattr(self.parent, wdgt_name)
+                gui_obj = getattr(form, wdgt_name)
                 # now get the data from the GUI object
                 if isinstance(gui_obj, (QLineEdit, QLabel)):
                     val = gui_obj.text()
@@ -134,13 +142,15 @@ class QTConfigManager:
             print(f'Bad call to Persist: ({uilist})')
             print(f'Exception: {xcpt}')
             return {}
-    
-    def _restore_qt(self, uidict: dict):
+
+    def restore_qt(self, uidict: dict, form=None):
         """Generic load values into UIelements from dictionairy uidict"""
+        if form is None:
+            form = self._mainform
         try:
             # Restore each value to GUI element
             for key in uidict.keys():
-                wdgt = self.parent.findChild(QWidget, key)
+                wdgt = form.findChild(QWidget, key)
                 if isinstance(wdgt, (QLineEdit, QLabel)):
                     wdgt.setText(uidict[key])
                 elif isinstance(wdgt, QComboBox):
