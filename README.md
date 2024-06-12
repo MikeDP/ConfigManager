@@ -46,7 +46,7 @@ config = ConfigManager('MyApp', 'myapp')
 config.user = config.assign("user", "Dave")  # config.user is aready set to 'Mike'
 
 # Assign new default value if config.position doesn't exist
-global_position = config.assign(config.position, {'X': 0.00, 'Y': 0.00})
+global_position = config.assign("position", {'X': 0.00, 'Y': 0.00})
 # Both global_position and config.position are unchanged at {'X':24.5...
  
 config._counter = 100   # Won't be saved with configuration file
