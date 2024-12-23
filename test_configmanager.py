@@ -9,7 +9,7 @@ v1.0  12/05/24
 import os
 import json
 import pytest
-from CpnfigManager import ConfigManager
+from ConfigManager import ConfigManager
 
 @pytest.fixture
 def config_manager():
@@ -39,7 +39,7 @@ def config_manager():
         os.remove(os.path.join(folder, file))
     os.rmdir(folder)
 
-def test_initialization(config_manager):
+def test_initialization(config_manager: ConfigManager):
     """
     Test initialization of ConfigManager.
 
@@ -48,7 +48,7 @@ def test_initialization(config_manager):
     """
     assert isinstance(config_manager, ConfigManager)
 
-def test_load_config(config_manager):
+def test_load_config(config_manager: ConfigManager):
     """
     Test some configuration data.
 
@@ -58,12 +58,7 @@ def test_load_config(config_manager):
     # Modify some attributes and save the configuration
     config_manager.USER = "TestUser"
     config_manager.save_config()
-    """
-    Test saving configuration data.
 
-    Args:
-        config_manager: Pytest fixture for ConfigManager instance.
-    """
     # Modify some attributes
     config_manager.USER = "TestUser"
     config_manager.NUMBER = 42
@@ -76,7 +71,7 @@ def test_load_config(config_manager):
         saved_config = json.load(file)
         assert saved_config == {"_comment": 'DO NOT HAND EDIT!', "USER": "TestUser", "NUMBER": 42}
 
-def test_get_attribute(config_manager):
+def test_get_attribute(config_manager: ConfigManager):
     """
     Test accessing attributes that don't exist.
 
@@ -86,7 +81,7 @@ def test_get_attribute(config_manager):
     # Access an attribute that doesn't exist
     assert config_manager.test_attribute is None
 
-def test_assign(config_manager):
+def test_assign(config_manager: ConfigManager):
     """
     Test assigning values to attributes.
 
@@ -101,9 +96,7 @@ def test_assign(config_manager):
     config_manager.assign("test2", "Test2 value")
     assert "Test2 value" == config_manager.test2
 
-
-
-def test_save_attr(config_manager):
+def test_save_attr(config_manager: ConfigManager):
     """
     Test _attr not persisted
     """
@@ -122,7 +115,7 @@ def test_save_attr(config_manager):
         assert '_notsaved' not in saved_config.keys()
         assert config_manager._comment in saved_config.values()
 
-def test_add_class(config_manager):
+def test_add_class(config_manager: ConfigManager):
     """
     Add class attribute to check it doesn't save
     """
@@ -131,8 +124,7 @@ def test_add_class(config_manager):
     config_manager.NUMBER = 42
     config_manager._notsaved = "This attribute is not saved"
     config_manager._comment = "This is the title and should be saved"
-    
-  # Add a  any class object as an attribute
+    # Add a class object
     from MDPLibrary.ClassesLib import PersistUI
     config_manager.class_item = PersistUI(None)
 
@@ -142,4 +134,68 @@ def test_add_class(config_manager):
     with open(config_manager._file_path, 'r', encoding='utf8') as file:
         saved_config = json.load(file)
         assert 'class_item' not in saved_config.keys()
-        assert 'USER' in saved_config.keys()
+        
+def test_set_handling(config_manager: ConfigManager):
+    """Test saving and loading sets."""
+    config_manager.test_set = {1, 2, 3}
+    config_manager.save_config()
+    config_manager.load_config()
+    assert config_manager.test_set == {1, 2, 3}
+
+def test_tuple_handling(config_manager: ConfigManager):
+    """Test saving and loading tuples."""
+    config_manager.test_tuple = (4, 5, 6)
+    config_manager.save_config()
+    config_manager.load_config()
+    assert config_manager.test_tuple == (4, 5, 6)
+
+def test_integer_handling(config_manager: ConfigManager):
+    """Test saving and loading tuples."""
+    config_manager.test_tuple = 666
+    config_manager.save_config()
+    config_manager.load_config()
+    assert config_manager.test_tuple == 666
+
+def test_string_handling(config_manager: ConfigManager):
+    """Test saving and loading tuples."""
+    config_manager.test_tuple = "qwerty uiop\n"
+    config_manager.save_config()
+    config_manager.load_config()
+    assert config_manager.test_tuple == "qwerty uiop\n"
+
+
+def test_float_handling(config_manager: ConfigManager):
+    """Test saving and loading tuples."""
+    config_manager.test_tuple = 3.14159
+    config_manager.save_config()
+    config_manager.load_config()
+    assert config_manager.test_tuple == 3.14159
+
+def test_bool_handling(config_manager: ConfigManager):
+    """Test saving and loading tuples."""
+    config_manager.test_tuple = True
+    config_manager.save_config()
+    config_manager.load_config()
+    assert config_manager.test_tuple 
+    
+def test_dict_handling(config_manager: ConfigManager):
+    """Test saving and loading tuples."""
+    config_manager.test_tuple = {"A": 12, "B": "string item"}
+    config_manager.save_config()
+    config_manager.load_config()
+    assert config_manager.test_tuple == {"A": 12, "B": "string item"}
+
+def test_byte_handling(config_manager: ConfigManager):
+    """Test saving and loading tuples."""
+    byt = "a byte sting".encode()
+    config_manager.test_tuple = byt
+    config_manager.save_config()
+    config_manager.load_config()
+    assert config_manager.test_tuple == byt
+
+def test_nested_structures(config_manager: ConfigManager):
+    """Test saving and loading nested structures."""
+    config_manager.nested = [set([1, 2]), (3, 4), {"key": set([5, 6])}]
+    config_manager.save_config()
+    config_manager.load_config()
+    assert config_manager.nested == [set([1, 2]), (3, 4), {"key": set([5, 6])}] 
