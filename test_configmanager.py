@@ -4,6 +4,7 @@ test_configmanager.py
 pytest module for ConfigManger functional testing
 
 v1.0  12/05/24
+v0.2  22/12/24 for v0.2
 """
 
 import os
